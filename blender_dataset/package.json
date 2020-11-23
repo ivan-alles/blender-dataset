@@ -1,0 +1,6 @@
+{
+  "name":  "blender-dataset",
+  "author":  "Ivan Alles",
+  "version":  "1.0.0",
+  "description": "A toolkit to create photorealistic datasets for machine learning with Blender."
+}
