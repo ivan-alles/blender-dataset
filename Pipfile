@@ -9,8 +9,10 @@ flake8 = "*"
 
 [packages]
 numpy = "*"
+scipy = "*"
 opencv-python = "*"
-robogym = {git = "https://github.com/ivan-alles/robogym.git",ref = "v1.0.2"}
+#robogym = {git = "https://github.com/ivan-alles/robogym.git", ref = "v1.0.2"}
+robogym = {git = "https://github.com/ivan-alles/robogym.git", ref = "master"}
 
 [requires]
 python_version = "3.6"
