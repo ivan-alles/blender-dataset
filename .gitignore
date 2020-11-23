@@ -1,3 +1,5 @@
 .temp
 .venv
 __pycache__
+
+*.blend1
