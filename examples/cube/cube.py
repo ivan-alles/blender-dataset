@@ -48,7 +48,7 @@ handlers = [
         location_range=((-1, -1, 0.5), (1, 1, 1.5))),
     handlers.SetMaterialHandler(
         cube,
-        ('RedMaterial', 'GreenMaterial', 'BlueMaterial'),
+        ('RedMaterial', 'GreenMaterial', 'Concrete'),
     ),
     handlers.PlaceObject(
         cube,
@@ -56,9 +56,9 @@ handlers = [
         rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15))),
     handlers.SetMaterialHandler(
         plane,
-        ('RedMaterial', 'GreenMaterial', 'BlueMaterial'),
+        ('RedMaterial', 'GreenMaterial', 'Concrete'),
     ),
 ]
 
 generator.add_handlers(handlers)
-generator.generate_images(10)
+generator.generate_images(20)
