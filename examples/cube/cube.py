@@ -1,25 +1,25 @@
-# noinspection PyUnresolvedReferences
-import bpy
-import numpy as np
 import os
 import sys
-import json
+
+# noinspection PyUnresolvedReferences
+import bpy
+
+
+# Set to True to install dependencies once. Blender must be run with amdinistrator rights.
+if True:
+    import subprocess
+    python_exe = os.path.join(sys.prefix, 'bin', 'python.exe')
+    subprocess.call([python_exe, '-m', 'ensurepip'])
+    subprocess.call([python_exe, '-m', 'pip', 'install', '--upgrade', 'pip'])
+
+    subprocess.call([python_exe, '-m', 'pip', 'install', 'opencv-python'])
+    subprocess.call([python_exe, '-m', 'pip', 'install', 'scipy'])
+    subprocess.call([python_exe, '-m', 'pip', 'install', 'git+https://github.com/ivan-alles/robogym.git@master'])
 
 MYDIR = os.path.dirname(bpy.data.filepath)
-PROJECT_ROOT = os.path.abspath(os.path.join(MYDIR, '..', '..'))
-print(PROJECT_ROOT)
+# Add project root to be able to import blender-dataset.
+sys.path.append(os.path.abspath(os.path.join(MYDIR, '..', '..')))
 
-# Allow imports form our project instead of blender installation.
-module_paths = [
-    PROJECT_ROOT,
-#    os.path.join(PROJECT_ROOT, '.venv/Lib/site-packages')
-]
-
-for mp in module_paths:
-    ap = os.path.abspath(mp)
-    print(ap)
-    if not ap in sys.path:
-        sys.path.append(ap)
 
 from blender_dataset import generator
 from blender_dataset import handlers
