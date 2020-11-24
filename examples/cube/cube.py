@@ -4,9 +4,8 @@ import sys
 # noinspection PyUnresolvedReferences
 import bpy
 
-
 # Set to True to install dependencies once. Blender must be run with amdinistrator rights.
-if True:
+if False:
     import subprocess
     python_exe = os.path.join(sys.prefix, 'bin', 'python.exe')
     subprocess.call([python_exe, '-m', 'ensurepip'])

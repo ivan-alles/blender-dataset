@@ -103,7 +103,7 @@ class Generator:
             start_index = max(indexes) + 1
         else:
             start_index = 0
-            make_clean_directory(self._output_dir)
+            utils.make_clean_directory(self._output_dir)
 
         self._run_handlers("on_scene_begin")
 
