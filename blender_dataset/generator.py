@@ -16,7 +16,7 @@ class Generator:
 
     def __init__(self, incremental=False,
                  output_dir='output',
-                 image_dir='images', image_size=(640, 480), image_extension='png',
+                 image_size=(640, 480), image_extension='png',
                  rng_seed=None):
         """
         Creates new object.
@@ -26,8 +26,7 @@ class Generator:
                If incremental is true, but the output directory does not exist,
                the setting is ignored. self.incremental will return false. This can be used to start generation from scratch by deleting the output
                directory without changing the parameters.
-        :param output_dir: root directory for all output files. Will be cleared before image generation.
-        :param image_dir: root directory for images (relative to output).
+        :param output_dir: root directory for the output files. Will be cleared before image generation.
         :param image_size: size of the image. A tuple of (width, height, percentage).
         If the percentage is omitted it will default to 100 (recommended).
         :param rng_seed: rng seed to initialize self.rng. If None, numpy will use a random seed.
@@ -37,7 +36,6 @@ class Generator:
         if self._incremental and not os.path.isdir(self._output_dir):
             self._incremental = False
         self._image_size = image_size
-        self._image_dir = image_dir
         self._image_extension = image_extension
         self._handlers = []
         self._rng = np.random.RandomState(rng_seed)
@@ -50,10 +48,6 @@ class Generator:
     @property
     def output_dir(self):
         return self._output_dir
-
-    @property
-    def image_dir(self):
-        return self._image_dir
 
     @property
     def current_image_path(self):
@@ -94,10 +88,8 @@ class Generator:
         for handler in self._handlers:
             handler.generator = self
 
-        image_dir = os.path.join(self._output_dir, self._image_dir)
-
         if self._incremental:
-            path = self._output_dir + "/" + self._image_dir + '/**/*.' + self._image_extension
+            path = self._output_dir + '/**/*.' + self._image_extension
             images = glob.glob(path, recursive=True)
             indexes = [int(os.path.splitext(os.path.basename(x))[0]) for x in images] + [-1]
             start_index = max(indexes) + 1
@@ -113,7 +105,7 @@ class Generator:
         for i in range(start_index, start_index + count):
             self._current_image_path = '{:04d}/{:07d}.{}'.format(i // 1000, i, self._image_extension)
             self._run_handlers("on_image_begin")
-            full_image_path = os.path.join(image_dir, self._current_image_path)
+            full_image_path = os.path.join(self._output_dir, self._current_image_path)
             utils.set_render_filepath(full_image_path)
             bpy.ops.render.render(write_still=True)
             self._run_handlers("on_image_end", reverse=True)
