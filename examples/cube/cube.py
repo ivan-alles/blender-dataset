@@ -22,7 +22,6 @@ sys.path.append(os.path.abspath(os.path.join(MYDIR, '..', '..')))
 
 from blender_dataset import generator
 from blender_dataset import handlers
-from robogym import transform3 as t3
 
 light = bpy.data.objects['light']
 
@@ -33,24 +32,20 @@ generator = generator.Generator(
     image_size=[640, 480],
     rng_seed=1)
 
-# working_plane = bpy.data.objects['working_plane']
-
+cube = bpy.data.objects['cube']
 camera = bpy.data.objects['camera']
-
-# Fix camera position at z = min_z. We will vary object position in range [min_z - max_z, 0]
-# min_z = 100
-# camera.location = (0, 0, min_z)
-
 
 handlers = [
     handlers.SetLightHandler(
         light,
         power_range=(5, 15),
-        color_range=(
-            (0.8, 0.8, 0.8),
-            (1, 1, 1)
+        color_range=((0.8, 0.8, 0.8), (1, 1, 1)
         )
     ),
+    handlers.PlaceObject(
+        cube,
+        location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.15)),
+        rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15)))
 ]
 
 generator.add_handlers(handlers)

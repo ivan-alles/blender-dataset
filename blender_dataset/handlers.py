@@ -73,18 +73,16 @@ class PlaceObject(Handler):
         :param rotation_euler_range: a tuple ((a1_min, a2_min, a3_min), (a1_max, a2_max, a3_max)).
         """
         super().__init__()
+        self._object = obj
         self._location_range = location_range
         self._rotation_euler_range = rotation_euler_range
-        self._object = obj
 
     def on_image_begin(self):
         if self._location_range is not None:
-            location = self._generator.rng.uniform(self._location_range[0], self._location_range[1])
-            self._object.location = location
+            self._object.location = self._generator.rng.uniform(*self._location_range)
 
         if self._rotation_euler_range is not None:
-            rotation_euler = self._generator.rng.uniform(self._rotation_euler_range[0], self._rotation_euler_range[1])
-            self._object.rotation_euler = rotation_euler
+            self._object.rotation_euler = self._generator.rng.uniform(*self._rotation_euler_range)
 
 
 class PlaceMultipleObjectsHandler(Handler):
