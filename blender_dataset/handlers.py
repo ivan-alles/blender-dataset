@@ -271,17 +271,17 @@ class SetMaterialHandler(Handler):
         material = self._materials[self._generator.rng.randint(0, len(self._materials))]
         self._object.data.materials.clear()
         self._object.data.materials.append(material)
-        mapping_key = "Mapping"
-        if mapping_key in material.node_tree.nodes:
-            texture_mapping_node = material.node_tree.nodes[mapping_key]
-            if self._texture_location_range is not None:
-                value = self._generator.rng.uniform(self._texture_location_range[0], self._texture_location_range[1])
-                # TODO(ia): restore this
-                # texture_mapping_node.translation = value
-            if self._texture_scale_range is not None:
-                value = self._generator.rng.uniform(self._texture_scale_range[0], self._texture_scale_range[1])
-                # TODO(ia): restore this
-                # texture_mapping_node.scale = value
+        # mapping_key = "Mapping"
+        # if mapping_key in material.node_tree.nodes:
+        #     texture_mapping_node = material.node_tree.nodes[mapping_key]
+        #     if self._texture_location_range is not None:
+        #         value = self._generator.rng.uniform(self._texture_location_range[0], self._texture_location_range[1])
+        #         # TODO(ia): restore this
+        #         # texture_mapping_node.translation = value
+        #     if self._texture_scale_range is not None:
+        #         value = self._generator.rng.uniform(self._texture_scale_range[0], self._texture_scale_range[1])
+        #         # TODO(ia): restore this
+        #         # texture_mapping_node.scale = value
 
 
 class SetLightHandler(Handler):

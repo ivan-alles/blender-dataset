@@ -45,6 +45,10 @@ handlers = [
     handlers.PlaceObject(
         light,
         location_range=((-1, -1, 0.5), (1, 1, 1.5))),
+    handlers.SetMaterialHandler(
+        cube,
+        ('RedMaterial', 'GreenMaterial', 'BlueMaterial'),
+    ),
     handlers.PlaceObject(
         cube,
         location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.15)),
