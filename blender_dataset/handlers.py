@@ -299,13 +299,12 @@ class SetLightHandler(Handler):
 
         :param light: light obj.
         :param power_range: a tuple (strength_min, strength_max).
-        :param color_range: a tuple ((r_min, g_min, b_min, a_min), (r_max, g_max, b_max, a_max)).
+        :param color_range: a tuple ((r_min, g_min, b_min), (r_max, g_max, b_max)).
         """
         super().__init__()
         self._light = light
         self._power_range = power_range
         self._color_range = color_range
-        self._shadow_soft_size_range = shadow_soft_size_range
 
     def on_image_begin(self):
         if self._power_range is not None:
