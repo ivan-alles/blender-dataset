@@ -1,6 +1,7 @@
 # Copyright 2018-2020 Ivan Alles. See also the LICENSE file.
 
 import os
+import shutil
 
 # noinspection PyUnresolvedReferences
 import bmesh
@@ -10,9 +11,10 @@ import bpy
 import bpy_extras
 import cv2
 # noinspection PyUnresolvedReferences
-import mathutils.bvhtree as bhvtree
+from mathutils import bvhtree
 # noinspection PyUnresolvedReferences
 from mathutils import Vector
+
 import numpy as np
 
 
@@ -163,18 +165,18 @@ def is_mesh_intersecting(objects1, objects2):
     :param objects2: list of blender objects.
     :return: True if any objects from objects1 intersects with any object from objects2.
     """
-    def make_bhvtree(obj):
+    def make_bvhtree(obj):
         bm = bmesh.new()
         bm.from_mesh(obj.data)
         bm.transform(obj.matrix_world)
-        return bhvtree.BVHTree.FromBMesh(bm)
+        return bvhtree.BVHTree.FromBMesh(bm)
 
     for obj1 in objects1:
-        tree1 = make_bhvtree(obj1)
+        tree1 = make_bvhtree(obj1)
         for obj2 in objects2:
             if obj1 == obj2:
                 continue
-            tree2 = make_bhvtree(obj2)
+            tree2 = make_bvhtree(obj2)
             intersections = tree1.overlap(tree2)
             if intersections:
                 return True
