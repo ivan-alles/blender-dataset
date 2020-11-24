@@ -9,6 +9,7 @@ import numpy as np
 
 from blender_dataset import utils
 
+
 class Generator:
     """
     Generates images by transforming and rendering a blender scene.
@@ -22,10 +23,9 @@ class Generator:
         Creates new object.
 
         :param incremental if false, will clear the output directory and recreate all outputs.
-               If true, will add images to existing ones.
-               If incremental is true, but the output directory does not exist,
-               the setting is ignored. self.incremental will return false. This can be used to start generation from scratch by deleting the output
-               directory without changing the parameters.
+        If true, will add images to existing ones. If incremental is true, but the output directory does not exist,
+        the setting is ignored. self.incremental will return false. This can be used to start generation
+        from scratch by deleting the output directory without changing the parameters.
         :param output_dir: root directory for the output files. Will be cleared before image generation.
         :param image_size: size of the image. A tuple of (width, height, percentage).
         If the percentage is omitted it will default to 100 (recommended).
@@ -117,4 +117,3 @@ class Generator:
         for handler in handlers:
             method = getattr(handler, method_name)
             method()
-

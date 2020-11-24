@@ -58,6 +58,7 @@ def get_camera_intrinsics(camera=None, scene=None, image_size=None):
 
     return intrinsics, image_size
 
+
 def world_to_image(world_location, scene=None, camera=None):
     """
     Convert world coordinates to image coordinates.
@@ -98,6 +99,7 @@ def world_to_image(world_location, scene=None, camera=None):
 
     return image_location
 
+
 def flatten_object_hierarchy(obj):
     """
     Flatten obj hierarchy.
@@ -134,6 +136,7 @@ def project_bounding_box_on_image(obj, scene=None, camera=None):
     image_points = world_to_image(points, scene, camera)
     return image_points
 
+
 def compute_orinented_bounding_box_on_image(obj, scene=None, camera=None):
     """
     Computes an oriented rectangle representing a 2d bounding box of the obj with its children.
@@ -146,6 +149,7 @@ def compute_orinented_bounding_box_on_image(obj, scene=None, camera=None):
     rect = cv2.minAreaRect(image_points)
     return rect
 
+
 def compute_convex_hull_on_image(obj, scene=None, camera=None):
     """
     Computes a 2d convex hull of the obj with its children.
@@ -156,6 +160,7 @@ def compute_convex_hull_on_image(obj, scene=None, camera=None):
     image_points = np.round(image_points).astype(np.int32)
     h = np.array(cv2.convexHull(image_points), dtype=np.int32).reshape(-1, 2)
     return h
+
 
 def is_mesh_intersecting(objects1, objects2):
     """

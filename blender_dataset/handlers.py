@@ -137,7 +137,7 @@ class PlaceMultipleObjectsHandler(Handler):
         :return:
         """
         return self._map2d
-    
+
     def _is_in_bounds(self, obj):
         """
         Check if the object is in bounds.
@@ -161,18 +161,11 @@ class PlaceMultipleObjectsHandler(Handler):
             points = np.array(points)
             is_outside = np.any(np.logical_or(points < lb, ub < points))
 
-            #print(points)
-            #print(points < lb, ub < points)
-            #print(is_outside)
-
             return not is_outside
 
-
         check_bounds = check_bounds_bounding_box
-        # TODO(ia): support user-defined function for bounds check.
 
         return check_bounds(obj)
-
 
     def on_image_begin(self):
         if self._make_map2d or self._max_corners_outside_image is not None:
@@ -183,20 +176,17 @@ class PlaceMultipleObjectsHandler(Handler):
                 o.location = self._far_away
             bpy.context.scene.update()
 
-        sucessfully_placed = []
+        successfully_placed = []
 
-        for object_i in range(len(self._objects)):
-            obj = self._objects[object_i]
-
+        for obj_i, obj in enumerate(self._objects):
             is_position_valid = False
 
             for attempt_i in range(self._random_attempt_count):
                 if self._location_range is not None:
-                    location = self._generator.rng.uniform(self._location_range[0], self._location_range[1])
+                    location = self._generator.rng.uniform(*self._location_range)
 
                 if self._rotation_euler_range is not None:
-                    rotation_euler = self._generator.rng.uniform(self._rotation_euler_range[0],
-                                                                 self._rotation_euler_range[1])
+                    rotation_euler = self._generator.rng.uniform(*self._rotation_euler_range)
 
                 obj.location = location
                 obj.rotation_euler = rotation_euler
@@ -218,27 +208,26 @@ class PlaceMultipleObjectsHandler(Handler):
                         continue
 
                 if self._prevent_intersection_3d:
-                    if utils.is_mesh_intersecting([obj], sucessfully_placed):
+                    if utils.is_mesh_intersecting([obj], successfully_placed):
                         continue
 
                 convex_hull_intesecting = False
                 if self._prevent_intersection_2d:
-                    if object_i > 0:
+                    if obj_i > 0:
                         convex_hull_image = np.zeros(self._image_size[::-1], dtype=np.int32)
-                        cv2.fillPoly(convex_hull_image, convex_hull.reshape(1, -1, 2), color=object_i+1)
+                        cv2.fillPoly(convex_hull_image, convex_hull.reshape(1, -1, 2), color=obj_i + 1)
                         convex_hull_intesecting = np.logical_and(convex_hull_image, self._map2d).any()
 
                     if convex_hull_intesecting:
                         continue
 
                 is_position_valid = True
-                sucessfully_placed.append(obj)
+                successfully_placed.append(obj)
                 if self._make_map2d or self._prevent_intersection_2d:
-                    cv2.fillPoly(self._map2d, convex_hull.reshape(1, -1, 2), color=object_i+1)
-                    #cv2.imshow("map2d", self._map2d)
-                    #cv2.waitKey(1000)
+                    cv2.fillPoly(self._map2d, convex_hull.reshape(1, -1, 2), color=obj_i + 1)
+                    # cv2.imshow("map2d", self._map2d)
+                    # cv2.waitKey(1000)
                     break
-
 
             if not is_position_valid and self._far_away is not None:
                 obj.location = self._far_away
@@ -309,7 +298,3 @@ class SetLightHandler(Handler):
             self._light.data.energy = self._generator.rng.uniform(*self._power_range)
         if self._color_range is not None:
             self._light.data.color = self._generator.rng.uniform(*self._color_range)
-
-
-
-

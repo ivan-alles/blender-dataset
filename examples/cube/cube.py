@@ -1,3 +1,5 @@
+# Copyright 2018-2020 Ivan Alles. See also the LICENSE file.
+
 import os
 import sys
 
@@ -20,8 +22,8 @@ MYDIR = os.path.dirname(bpy.data.filepath)
 # Add project root to be able to import blender-dataset.
 sys.path.append(os.path.abspath(os.path.join(MYDIR, '..', '..')))
 
-from blender_dataset import generator
-from blender_dataset import handlers
+from blender_dataset import generator  # noqa: E402
+from blender_dataset import handlers   # noqa: E402
 
 light = bpy.data.objects['light']
 
@@ -39,8 +41,7 @@ handlers = [
     handlers.SetLightHandler(
         light,
         power_range=(5, 15),
-        color_range=((0.8, 0.8, 0.8), (1, 1, 1)
-        )
+        color_range=((0.8, 0.8, 0.8), (1, 1, 1))
     ),
     handlers.PlaceObject(
         light,
