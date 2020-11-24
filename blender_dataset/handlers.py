@@ -286,39 +286,32 @@ class SetMaterialHandler(Handler):
                 # texture_mapping_node.scale = value
 
 
-class SetLampHandler(Handler):
+class SetLightHandler(Handler):
     """
-    Set lamp parameters.
+    Set light parameters.
     """
-    def __init__(self, lamp,
-                 strength_range=None,
-                 color_range=None,
-                 shadow_soft_size_range=None
+    def __init__(self, light,
+                 power_range=None,
+                 color_range=None
                  ):
         """
         Creates a new handler.
 
-        :param lamp: lamp obj.
-        :param strength_range: a tuple (strength_min, strength_max).
+        :param light: light obj.
+        :param power_range: a tuple (strength_min, strength_max).
         :param color_range: a tuple ((r_min, g_min, b_min, a_min), (r_max, g_max, b_max, a_max)).
-        :param shadow_soft_size_range: a tuple of (size_min, size_max).
         """
         super().__init__()
-        self._lamp = lamp
-        self._strength_range = strength_range
+        self._light = light
+        self._power_range = power_range
         self._color_range = color_range
         self._shadow_soft_size_range = shadow_soft_size_range
 
     def on_image_begin(self):
-        if self._strength_range is not None:
-            strength = self._generator.rng.uniform(self._strength_range[0], self._strength_range[1])
-            self._lamp.data.node_tree.nodes['Emission'].inputs['Strength'].default_value = strength
+        if self._power_range is not None:
+            self._light.data.energy = self._generator.rng.uniform(*self._power_range)
         if self._color_range is not None:
-            color = self._generator.rng.uniform(self._color_range[0], self._color_range[1])
-            self._lamp.data.node_tree.nodes['Emission'].inputs['Color'].default_value = color
-        if self._shadow_soft_size_range is not None:
-            size = self._generator.rng.uniform(self._shadow_soft_size_range[0], self._shadow_soft_size_range[1])
-            self._lamp.data.shadow_soft_size = size
+            self._light.data.color = self._generator.rng.uniform(*self._color_range)
 
 
 
