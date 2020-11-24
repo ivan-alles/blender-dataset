@@ -43,6 +43,9 @@ handlers = [
         )
     ),
     handlers.PlaceObject(
+        light,
+        location_range=((-1, -1, 0.5), (1, 1, 1.5))),
+    handlers.PlaceObject(
         cube,
         location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.15)),
         rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15)))
