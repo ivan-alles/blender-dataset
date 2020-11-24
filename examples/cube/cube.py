@@ -25,7 +25,6 @@ from blender_dataset import handlers
 
 light = bpy.data.objects['light']
 
-# Set-up generator and handlers
 generator = generator.Generator(
     incremental=False,
     output_dir=os.path.join(MYDIR, 'output'),
@@ -33,6 +32,7 @@ generator = generator.Generator(
     rng_seed=1)
 
 cube = bpy.data.objects['cube']
+plane = bpy.data.objects['plane']
 camera = bpy.data.objects['camera']
 
 handlers = [
@@ -52,7 +52,11 @@ handlers = [
     handlers.PlaceObject(
         cube,
         location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.15)),
-        rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15)))
+        rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15))),
+    handlers.SetMaterialHandler(
+        plane,
+        ('RedMaterial', 'GreenMaterial', 'BlueMaterial'),
+    ),
 ]
 
 generator.add_handlers(handlers)
