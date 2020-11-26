@@ -23,6 +23,7 @@ def get_object(obj):
         return bpy.data.objects[obj]
     return obj
 
+
 def set_render_filepath(filepath):
     root, ext = os.path.splitext(filepath)
     bpy.context.scene.render.image_settings.file_format = ext[1:].upper()
