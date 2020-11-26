@@ -177,7 +177,9 @@ class PlaceMultipleObjectsHandler(Handler):
         return check_bounds_bounding_box(obj)
 
     def on_image_begin(self):
-        if self._make_map2d or self._max_corners_outside_image is not None:
+        is_map2d_required = self._make_map2d or not self._intersection_2d
+
+        if is_map2d_required:
             self._map2d = np.zeros(self._image_size[::-1], dtype=np.int32)
 
         if self._far_away is not None:
@@ -220,25 +222,26 @@ class PlaceMultipleObjectsHandler(Handler):
                     if utils.is_mesh_intersecting([obj], successfully_placed):
                         continue
 
-                convex_hull_intesecting = False
+                is_convex_hull_intersecting = False
                 if not self._intersection_2d:
                     if obj_i > 0:
-                        convex_hull_image = np.zeros(self._image_size[::-1], dtype=np.int32)
+                        convex_hull_image = np.zeros_like(self._map2d)
                         cv2.fillPoly(convex_hull_image, convex_hull.reshape(1, -1, 2), color=obj_i + 1)
-                        convex_hull_intesecting = np.logical_and(convex_hull_image, self._map2d).any()
+                        is_convex_hull_intersecting = np.logical_and(convex_hull_image, self._map2d).any()
 
-                    if convex_hull_intesecting:
+                    if is_convex_hull_intersecting:
                         continue
 
                 is_position_valid = True
                 successfully_placed.append(obj)
-                if self._make_map2d or not self._intersection_2d:
+                if is_map2d_required:
                     cv2.fillPoly(self._map2d, convex_hull.reshape(1, -1, 2), color=obj_i + 1)
-                    # cv2.imshow("map2d", self._map2d)
+                    # cv2.imshow("map2d", self._map2d.astype(np.float32) / len(self._objects))
                     # cv2.waitKey(1000)
                 break
 
             if not is_position_valid and self._far_away is not None:
+                print('Cannot place -------------------------------------------------')
                 obj.location = self._far_away
                 bpy.context.view_layer.update()
                 continue
