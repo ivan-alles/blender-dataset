@@ -87,8 +87,7 @@ class PlaceObject(Handler):
 
 class PlaceMultipleObjectsHandler(Handler):
     """
-    Places multiple objects at a range of positions.
-
+    Tries to places multiple objects at a range of positions.
     Can check intersection and visibility.
     """
     def __init__(self,
@@ -96,19 +95,33 @@ class PlaceMultipleObjectsHandler(Handler):
                  location_range=None,
                  rotation_euler_range=None,
                  bounds=None,
-                 prevent_intersection_2d=False,
-                 prevent_intersection_3d=False,
+                 intersection_3d=True,
+                 intersection_2d=True,
                  max_corners_outside_image=None,
                  far_away=None,
                  make_map2d=False,
                  random_attempt_count=100):
+        """
+
+        :param objects: an iterable of objects.
+        :param location_range: a tuple ((x_min, y_min, z_min), (x_max, y_max, z_max)).
+        :param rotation_euler_range: a tuple ((a1_min, a2_min, a3_min), (a1_max, a2_max, a3_max)).
+        :param bounds: a bounding box the objects must fit into: ((minx, miny, minz), (maxx, maxy, maxz)).
+        :param intersection_3d: if False, the 3d objects will not intersect.
+        :param intersection_2d: if False, the rendered objects will not intersect.
+        :param max_corners_outside_image: maximal number of object corners outside the image.
+        :param far_away: a location to move all object to before placing them. Keeps unplaced objects out of
+        the camera field of view.
+        :param make_map2d: make a 2d array with pixels filled with object indexes.
+        :param random_attempt_count: a number of attempts to place the objects.
+        """
         super().__init__()
         self._location_range = np.array(location_range)
         self._rotation_euler_range = rotation_euler_range
         self._objects = [utils.get_object(o) for o in objects]
         self._bounds = bounds
-        self._prevent_intersection_2d = prevent_intersection_2d
-        self._prevent_intersection_3d = prevent_intersection_3d
+        self._intersection_2d = intersection_2d
+        self._intersection_3d = intersection_3d
         self._max_corners_outside_image = max_corners_outside_image
         self._far_away = far_away
         self._make_map2d = make_map2d
@@ -161,9 +174,7 @@ class PlaceMultipleObjectsHandler(Handler):
 
             return not is_outside
 
-        check_bounds = check_bounds_bounding_box
-
-        return check_bounds(obj)
+        return check_bounds_bounding_box(obj)
 
     def on_image_begin(self):
         if self._make_map2d or self._max_corners_outside_image is not None:
@@ -172,7 +183,7 @@ class PlaceMultipleObjectsHandler(Handler):
         if self._far_away is not None:
             for o in self._objects:
                 o.location = self._far_away
-            bpy.context.scene.update()
+            # bpy.context.scene.update()
 
         successfully_placed = []
 
@@ -188,7 +199,7 @@ class PlaceMultipleObjectsHandler(Handler):
 
                 obj.location = location
                 obj.rotation_euler = rotation_euler
-                bpy.context.scene.update()
+                # bpy.context.scene.update()
 
                 if not self._is_in_bounds(obj):
                     continue
@@ -205,12 +216,12 @@ class PlaceMultipleObjectsHandler(Handler):
                     if corners_outside_image > self._max_corners_outside_image:
                         continue
 
-                if self._prevent_intersection_3d:
+                if not self._intersection_3d:
                     if utils.is_mesh_intersecting([obj], successfully_placed):
                         continue
 
                 convex_hull_intesecting = False
-                if self._prevent_intersection_2d:
+                if not self._intersection_2d:
                     if obj_i > 0:
                         convex_hull_image = np.zeros(self._image_size[::-1], dtype=np.int32)
                         cv2.fillPoly(convex_hull_image, convex_hull.reshape(1, -1, 2), color=obj_i + 1)
@@ -221,7 +232,7 @@ class PlaceMultipleObjectsHandler(Handler):
 
                 is_position_valid = True
                 successfully_placed.append(obj)
-                if self._make_map2d or self._prevent_intersection_2d:
+                if self._make_map2d or not self._intersection_2d:
                     cv2.fillPoly(self._map2d, convex_hull.reshape(1, -1, 2), color=obj_i + 1)
                     # cv2.imshow("map2d", self._map2d)
                     # cv2.waitKey(1000)
@@ -229,7 +240,7 @@ class PlaceMultipleObjectsHandler(Handler):
 
             if not is_position_valid and self._far_away is not None:
                 obj.location = self._far_away
-                bpy.context.scene.update()
+                # bpy.context.scene.update()
                 continue
 
 
