@@ -49,18 +49,10 @@ handlers = [
         'cube2',
         ('RedMaterial', 'GreenMaterial', 'Concrete'),
     ),
-    # handlers.PlaceObject(
-    #     'cube1',
-    #     location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.15)),
-    #     rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15))),
-    # handlers.PlaceObject(
-    #     'cube2',
-    #     location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.15)),
-    #     rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15))),
     handlers.PlaceMultipleObjectsHandler(
         ['cube1',
          'cube2'],
-        location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.05)),
+        location_range=((-0.15, -0.15, 0.05), (0.15, 0.15, 0.10)),
         rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15)),
         intersection_3d=False,
         intersection_2d=False,
