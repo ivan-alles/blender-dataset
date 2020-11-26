@@ -1,6 +1,8 @@
 # Copyright 2018-2020 Ivan Alles. See also the LICENSE file.
 
+import json
 import os
+import shutil
 
 # noinspection PyUnresolvedReferences
 import bpy
@@ -297,3 +299,79 @@ class SetLightHandler(Handler):
             self._light.data.color = self._generator.rng.uniform(*self._color_range)
 
 
+class CreateDatasetFileHandler(Handler):
+    """
+    Creates a JSON file containing a list of objects for each rendered image.
+    """
+    def __init__(self, objects, output_file='dataset.json'):
+        """
+        Constructor.
+        :param objects: an iterable of objects. Of those, only objects having hide_render set to False
+        will be included to include in the dataset.
+        :param output_file: the name of the output file (relative to the output directory).
+        """
+        super().__init__()
+        self._objects = [utils.get_object(o) for o in objects]
+        self._output_file = output_file
+        self._data = []
+        self._output_path = None
+
+    def on_scene_begin(self):
+        if self._output_path is None:
+            self._output_path = os.path.join(self._generator.output_dir, self._output_file)
+
+    def on_image_end(self):
+        """
+        Add an entry to the output file and save it.
+
+        Do it after image rendering and saving to make sure the file references an existing image.
+        """
+        bpy.context.view_layer.update()
+
+        labels = []
+        for obj in self._objects:
+            obj_labels = self._create_object_labels(obj)
+            labels += obj_labels
+        self._data.append(
+            {
+                'image': self._generator.current_image_path,
+                'labels': labels
+            }
+        )
+
+        self._save()
+
+    def _create_object_labels(self, obj):
+        """
+        Create labels for current object.
+        :return: a list of labels.
+        """
+        labels = []
+        world_origin = obj.matrix_world @ Vector((0, 0, 0))
+        world_ax = obj.matrix_world @ Vector((1, 0, 0))
+        image_origin = utils.world_to_image(world_origin)
+        image_ax = utils.world_to_image(world_ax)
+        image_ax_vector = image_ax - image_origin
+        angle = np.arctan2(image_ax_vector[1], image_ax_vector[0])
+        label = {
+            'x': image_origin[0],
+            'y': image_origin[1],
+            'angle': angle,
+            'category': self._objects.index(obj)
+        }
+        labels.append(label)
+        # oriented_bb = utils.compute_orinented_bounding_box_on_image(cs)
+        # bounding_box_value = aval.OrientedRectValue([*oriented_bb[0], *oriented_bb[1], np.deg2rad(oriented_bb[2])])
+        # bounding_box_marker = aproj.make_marker('bounding_box', category, bounding_box_value)
+        # markers.append(bounding_box_marker)
+        return labels
+
+    def on_scene_end(self):
+        self._save()
+
+    def _save(self):
+        if os.path.isfile(self._output_path):
+            shutil.copyfile(self._output_path, self._output_path + ".bak")
+
+        with open(self._output_path, 'w') as f:
+            json.dump(self._data, f, indent=1)

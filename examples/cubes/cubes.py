@@ -32,6 +32,8 @@ generator = generator.Generator(
     image_size=[640, 480],
     rng_seed=1)
 
+objects = ['cube1', 'cube2']
+
 handlers = [
     handlers.SetLightHandler(
         'light',
@@ -49,18 +51,18 @@ handlers = [
         'cube2',
         ('RedMaterial', 'GreenMaterial', 'Concrete'),
     ),
+    handlers.SetMaterialHandler(
+        'plane',
+        ('RedMaterial', 'GreenMaterial', 'Concrete'),
+    ),
     handlers.PlaceMultipleObjectsHandler(
-        ['cube1',
-         'cube2'],
+        objects,
         location_range=((-0.15, -0.15, 0.05), (0.15, 0.15, 0.10)),
         rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15)),
         intersection_3d=False,
         intersection_2d=False
     ),
-    handlers.SetMaterialHandler(
-        'plane',
-        ('RedMaterial', 'GreenMaterial', 'Concrete'),
-    ),
+    handlers.CreateDatasetFileHandler(objects)
 ]
 
 generator.add_handlers(handlers)
