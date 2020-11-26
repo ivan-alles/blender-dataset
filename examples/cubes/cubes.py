@@ -55,8 +55,7 @@ handlers = [
         location_range=((-0.15, -0.15, 0.05), (0.15, 0.15, 0.10)),
         rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15)),
         intersection_3d=False,
-        intersection_2d=False,
-        far_away=(2, 2, 0)
+        intersection_2d=False
     ),
     handlers.SetMaterialHandler(
         'plane',
@@ -68,5 +67,4 @@ generator.add_handlers(handlers)
 generator.generate_images(20)
 
 # TODO:
-# 1. Place multiple objects without intersections
 # 2. Generate a json file with cs and bounding box.

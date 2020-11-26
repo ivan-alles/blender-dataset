@@ -1,5 +1,7 @@
 # Copyright 2018-2020 Ivan Alles. See also the LICENSE file.
 
+import os
+
 # noinspection PyUnresolvedReferences
 import bpy
 import cv2
@@ -98,11 +100,9 @@ class PlaceMultipleObjectsHandler(Handler):
                  intersection_3d=True,
                  intersection_2d=True,
                  max_corners_outside_image=None,
-                 far_away=None,
                  make_map2d=False,
                  random_attempt_count=100):
         """
-
         :param objects: an iterable of objects.
         :param location_range: a tuple ((x_min, y_min, z_min), (x_max, y_max, z_max)).
         :param rotation_euler_range: a tuple ((a1_min, a2_min, a3_min), (a1_max, a2_max, a3_max)).
@@ -110,7 +110,6 @@ class PlaceMultipleObjectsHandler(Handler):
         :param intersection_3d: if False, the 3d objects will not intersect.
         :param intersection_2d: if False, the rendered objects will not intersect.
         :param max_corners_outside_image: maximal number of object corners outside the image.
-        :param far_away: a location to move all object to before placing them or if no suitable place is found.
         This process keeps unplaced objects outside the image.
         :param make_map2d: make a 2d array with pixels filled with object indexes.
         :param random_attempt_count: a number of attempts to place the objects.
@@ -123,7 +122,6 @@ class PlaceMultipleObjectsHandler(Handler):
         self._intersection_2d = intersection_2d
         self._intersection_3d = intersection_3d
         self._max_corners_outside_image = max_corners_outside_image
-        self._far_away = far_away
         self._make_map2d = make_map2d
         self._map2d = None
         self._random_attempt_count = random_attempt_count
@@ -181,16 +179,12 @@ class PlaceMultipleObjectsHandler(Handler):
 
         if is_map2d_required:
             self._map2d = np.zeros(self._image_size[::-1], dtype=np.int32)
-
-        if self._far_away is not None:
-            for o in self._objects:
-                o.location = self._far_away
-            bpy.context.view_layer.update()
-
         successfully_placed = []
 
         for obj_i, obj in enumerate(self._objects):
-            is_position_valid = False
+            is_placed = False
+            obj.hide_viewport = False
+            obj.hide_render = False
 
             for attempt_i in range(self._random_attempt_count):
                 if self._location_range is not None:
@@ -226,17 +220,18 @@ class PlaceMultipleObjectsHandler(Handler):
                         if np.logical_and(convex_hull_image, self._map2d).any():
                             continue
 
-                is_position_valid = True
+                bpy.context.view_layer.update()
                 successfully_placed.append(obj)
+                is_placed = True
                 if is_map2d_required:
                     cv2.fillPoly(self._map2d, convex_hull.reshape(1, -1, 2), color=obj_i + 1)
                     # cv2.imshow('map2d', self._map2d.astype(np.float32) / len(self._objects))
                     # cv2.waitKey(1000)
                 break
 
-            if not is_position_valid and self._far_away is not None:
-                obj.location = self._far_away
-                bpy.context.view_layer.update()
+            if not is_placed:
+                obj.hide_viewport = True
+                obj.hide_render = True
 
 
 class SetMaterialHandler(Handler):
@@ -300,3 +295,5 @@ class SetLightHandler(Handler):
             self._light.data.energy = self._generator.rng.uniform(*self._power_range)
         if self._color_range is not None:
             self._light.data.color = self._generator.rng.uniform(*self._color_range)
+
+
