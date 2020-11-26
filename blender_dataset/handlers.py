@@ -194,13 +194,11 @@ class PlaceMultipleObjectsHandler(Handler):
 
             for attempt_i in range(self._random_attempt_count):
                 if self._location_range is not None:
-                    location = self._generator.rng.uniform(*self._location_range)
+                    obj.location = self._generator.rng.uniform(*self._location_range)
 
                 if self._rotation_euler_range is not None:
-                    rotation_euler = self._generator.rng.uniform(*self._rotation_euler_range)
+                    obj.rotation_euler = self._generator.rng.uniform(*self._rotation_euler_range)
 
-                obj.location = location
-                obj.rotation_euler = rotation_euler
                 bpy.context.view_layer.update()
 
                 if not self._is_in_bounds(obj):
@@ -221,29 +219,24 @@ class PlaceMultipleObjectsHandler(Handler):
                 if not self._intersection_3d and utils.is_mesh_intersecting([obj], successfully_placed):
                     continue
 
-                is_convex_hull_intersecting = False
                 if not self._intersection_2d:
                     if obj_i > 0:
                         convex_hull_image = np.zeros_like(self._map2d)
                         cv2.fillPoly(convex_hull_image, convex_hull.reshape(1, -1, 2), color=obj_i + 1)
-                        is_convex_hull_intersecting = np.logical_and(convex_hull_image, self._map2d).any()
-
-                    if is_convex_hull_intersecting:
-                        continue
+                        if np.logical_and(convex_hull_image, self._map2d).any():
+                            continue
 
                 is_position_valid = True
                 successfully_placed.append(obj)
                 if is_map2d_required:
                     cv2.fillPoly(self._map2d, convex_hull.reshape(1, -1, 2), color=obj_i + 1)
-                    # cv2.imshow("map2d", self._map2d.astype(np.float32) / len(self._objects))
+                    # cv2.imshow('map2d', self._map2d.astype(np.float32) / len(self._objects))
                     # cv2.waitKey(1000)
                 break
 
             if not is_position_valid and self._far_away is not None:
-                print('Cannot place -------------------------------------------------')
                 obj.location = self._far_away
                 bpy.context.view_layer.update()
-                continue
 
 
 class SetMaterialHandler(Handler):

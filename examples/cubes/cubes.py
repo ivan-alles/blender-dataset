@@ -62,7 +62,9 @@ handlers = [
          'cube2'],
         location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.05)),
         rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15)),
-        intersection_3d=False
+        intersection_3d=False,
+        intersection_2d=False,
+        far_away=(2, 2, 0)
     ),
     handlers.SetMaterialHandler(
         'plane',
