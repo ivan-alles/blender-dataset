@@ -135,7 +135,7 @@ def project_bounding_box_on_image(obj, scene=None, camera=None):
     points = []
     for o in objects:
         for p in o.bound_box:
-            pl = list(o.matrix_world * Vector(p))
+            pl = list(o.matrix_world @ Vector(p))
             points.append(pl)
 
     image_points = world_to_image(points, scene, camera)
