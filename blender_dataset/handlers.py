@@ -218,9 +218,8 @@ class PlaceMultipleObjectsHandler(Handler):
                     if corners_outside_image > self._max_corners_outside_image:
                         continue
 
-                if not self._intersection_3d:
-                    if utils.is_mesh_intersecting([obj], successfully_placed):
-                        continue
+                if not self._intersection_3d and utils.is_mesh_intersecting([obj], successfully_placed):
+                    continue
 
                 is_convex_hull_intersecting = False
                 if not self._intersection_2d:
