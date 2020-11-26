@@ -355,18 +355,23 @@ class CreateDatasetFileHandler(Handler):
         image_ax = utils.world_to_image(world_ax)
         image_ax_vector = image_ax - image_origin
         angle = np.arctan2(image_ax_vector[1], image_ax_vector[0])
-        origin = {
+        origin_label = {
             'x': image_origin[0],
             'y': image_origin[1],
             'angle': angle,
         }
-        # oriented_bb = utils.compute_orinented_bounding_box_on_image(cs)
-        # bounding_box_value = aval.OrientedRectValue([*oriented_bb[0], *oriented_bb[1], np.deg2rad(oriented_bb[2])])
-        # bounding_box_marker = aproj.make_marker('bounding_box', category, bounding_box_value)
-        # markers.append(bounding_box_marker)
+        bounding_box = utils.compute_orinented_bounding_box_on_image(obj)
+        bounding_box_label = {
+            'x': bounding_box[0][0],
+            'y': bounding_box[0][1],
+            'size_x': bounding_box[1][0],
+            'size_y': bounding_box[1][1],
+            'angle': np.deg2rad(bounding_box[2])
+        }
         return {
             'category': self._objects.index(obj),
-            'origin': origin
+            'origin': origin_label,
+            'bounding_box': bounding_box_label
         }
 
     def on_scene_end(self):
