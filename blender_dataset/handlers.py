@@ -328,14 +328,15 @@ class CreateDatasetFileHandler(Handler):
         """
         bpy.context.view_layer.update()
 
-        labels = []
+        objects = []
         for obj in self._objects:
             obj_labels = self._create_object_labels(obj)
-            labels += obj_labels
+            if obj_labels is not None:
+                objects.append(obj_labels)
         self._data.append(
             {
                 'image': self._generator.current_image_path,
-                'labels': labels
+                'objects': objects
             }
         )
 
@@ -344,27 +345,29 @@ class CreateDatasetFileHandler(Handler):
     def _create_object_labels(self, obj):
         """
         Create labels for current object.
-        :return: a list of labels.
+        :return: a dictionary of object labels or None to skip the object.
         """
-        labels = []
+        if obj.hide_render:
+            return None
         world_origin = obj.matrix_world @ Vector((0, 0, 0))
         world_ax = obj.matrix_world @ Vector((1, 0, 0))
         image_origin = utils.world_to_image(world_origin)
         image_ax = utils.world_to_image(world_ax)
         image_ax_vector = image_ax - image_origin
         angle = np.arctan2(image_ax_vector[1], image_ax_vector[0])
-        label = {
+        origin = {
             'x': image_origin[0],
             'y': image_origin[1],
             'angle': angle,
-            'category': self._objects.index(obj)
         }
-        labels.append(label)
         # oriented_bb = utils.compute_orinented_bounding_box_on_image(cs)
         # bounding_box_value = aval.OrientedRectValue([*oriented_bb[0], *oriented_bb[1], np.deg2rad(oriented_bb[2])])
         # bounding_box_marker = aproj.make_marker('bounding_box', category, bounding_box_value)
         # markers.append(bounding_box_marker)
-        return labels
+        return {
+            'category': self._objects.index(obj),
+            'origin': origin
+        }
 
     def on_scene_end(self):
         self._save()
