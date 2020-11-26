@@ -49,19 +49,21 @@ handlers = [
         'cube2',
         ('RedMaterial', 'GreenMaterial', 'Concrete'),
     ),
-    handlers.PlaceObject(
-        'cube1',
-        location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.15)),
-        rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15))),
-    handlers.PlaceObject(
-        'cube2',
-        location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.15)),
-        rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15))),
-    # PlaceMultipleObjectsHandler(
-    #     [cube],
-    #     location_range=((-0.50, -0.50, 0.05), (0.50, 0.50, 0.15)),
-    #     rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15))
-    # ),
+    # handlers.PlaceObject(
+    #     'cube1',
+    #     location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.15)),
+    #     rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15))),
+    # handlers.PlaceObject(
+    #     'cube2',
+    #     location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.15)),
+    #     rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15))),
+    handlers.PlaceMultipleObjectsHandler(
+        ['cube1',
+         'cube2'],
+        location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.05)),
+        rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15)),
+        intersection_3d=False
+    ),
     handlers.SetMaterialHandler(
         'plane',
         ('RedMaterial', 'GreenMaterial', 'Concrete'),
@@ -70,3 +72,7 @@ handlers = [
 
 generator.add_handlers(handlers)
 generator.generate_images(20)
+
+# TODO:
+# 1. Place multiple objects without intersections
+# 2. Generate a json file with cs and bounding box.

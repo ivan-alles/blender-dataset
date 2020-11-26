@@ -183,7 +183,7 @@ class PlaceMultipleObjectsHandler(Handler):
         if self._far_away is not None:
             for o in self._objects:
                 o.location = self._far_away
-            # bpy.context.scene.update()
+            bpy.context.view_layer.update()
 
         successfully_placed = []
 
@@ -199,7 +199,7 @@ class PlaceMultipleObjectsHandler(Handler):
 
                 obj.location = location
                 obj.rotation_euler = rotation_euler
-                # bpy.context.scene.update()
+                bpy.context.view_layer.update()
 
                 if not self._is_in_bounds(obj):
                     continue
@@ -236,11 +236,11 @@ class PlaceMultipleObjectsHandler(Handler):
                     cv2.fillPoly(self._map2d, convex_hull.reshape(1, -1, 2), color=obj_i + 1)
                     # cv2.imshow("map2d", self._map2d)
                     # cv2.waitKey(1000)
-                    break
+                break
 
             if not is_position_valid and self._far_away is not None:
                 obj.location = self._far_away
-                # bpy.context.scene.update()
+                bpy.context.view_layer.update()
                 continue
 
 
