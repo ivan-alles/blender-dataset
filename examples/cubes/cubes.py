@@ -25,7 +25,6 @@ sys.path.append(os.path.abspath(os.path.join(MYDIR, '..', '..')))
 from blender_dataset import generator  # noqa: E402
 from blender_dataset import handlers   # noqa: E402
 
-light = bpy.data.objects['light']
 
 generator = generator.Generator(
     incremental=False,
@@ -33,29 +32,38 @@ generator = generator.Generator(
     image_size=[640, 480],
     rng_seed=1)
 
-cube = bpy.data.objects['cube']
-plane = bpy.data.objects['plane']
-camera = bpy.data.objects['camera']
-
 handlers = [
     handlers.SetLightHandler(
-        light,
+        'light',
         power_range=(5, 15),
         color_range=((0.8, 0.8, 0.8), (1, 1, 1))
     ),
     handlers.PlaceObject(
-        light,
+        'light',
         location_range=((-1, -1, 0.5), (1, 1, 1.5))),
     handlers.SetMaterialHandler(
-        cube,
+        'cube1',
+        ('RedMaterial', 'GreenMaterial', 'Concrete'),
+    ),
+    handlers.SetMaterialHandler(
+        'cube2',
         ('RedMaterial', 'GreenMaterial', 'Concrete'),
     ),
     handlers.PlaceObject(
-        cube,
+        'cube1',
         location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.15)),
         rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15))),
+    handlers.PlaceObject(
+        'cube2',
+        location_range=((-0.10, -0.10, 0.05), (0.10, 0.10, 0.15)),
+        rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15))),
+    # PlaceMultipleObjectsHandler(
+    #     [cube],
+    #     location_range=((-0.50, -0.50, 0.05), (0.50, 0.50, 0.15)),
+    #     rotation_euler_range=((-0.05, -0.05, -3.15), (0.05, 0.05, 3.15))
+    # ),
     handlers.SetMaterialHandler(
-        plane,
+        'plane',
         ('RedMaterial', 'GreenMaterial', 'Concrete'),
     ),
 ]

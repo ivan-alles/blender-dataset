@@ -68,12 +68,12 @@ class PlaceObject(Handler):
         """
         Creates a new handler.
 
-        :param obj: the obj to place, e.g. a mesh, camera, empty, etc.
+        :param obj: the object or its name.
         :param location_range: a tuple ((x_min, y_min, z_min), (x_max, y_max, z_max)).
         :param rotation_euler_range: a tuple ((a1_min, a2_min, a3_min), (a1_max, a2_max, a3_max)).
         """
         super().__init__()
-        self._object = obj
+        self._object = utils.get_object(obj)
         self._location_range = location_range
         self._rotation_euler_range = rotation_euler_range
 
@@ -90,8 +90,6 @@ class PlaceMultipleObjectsHandler(Handler):
     Places multiple objects at a range of positions.
 
     Can check intersection and visibility.
-
-    Developer notes: consider that derived classes may change the list of objects in run-time.
     """
     def __init__(self,
                  objects,
@@ -107,7 +105,7 @@ class PlaceMultipleObjectsHandler(Handler):
         super().__init__()
         self._location_range = np.array(location_range)
         self._rotation_euler_range = rotation_euler_range
-        self._objects = objects
+        self._objects = [utils.get_object(o) for o in objects]
         self._bounds = bounds
         self._prevent_intersection_2d = prevent_intersection_2d
         self._prevent_intersection_3d = prevent_intersection_3d
@@ -238,8 +236,6 @@ class PlaceMultipleObjectsHandler(Handler):
 class SetMaterialHandler(Handler):
     """
     This handler sets surface for an obj.
-
-    TODO(ia): port random material weights from number plates.
     """
 
     def __init__(self, obj, materials=[],
@@ -252,7 +248,7 @@ class SetMaterialHandler(Handler):
         """
         super().__init__()
         self._materials = [bpy.data.materials.get(mn) for mn in materials]
-        self._object = obj
+        self._object = utils.get_object(obj)
         self._texture_location_range = texture_location_range
         self._texture_scale_range = texture_scale_range
 
@@ -284,12 +280,12 @@ class SetLightHandler(Handler):
         """
         Creates a new handler.
 
-        :param light: light obj.
+        :param light: light obj or its name.
         :param power_range: a tuple (strength_min, strength_max).
         :param color_range: a tuple ((r_min, g_min, b_min), (r_max, g_max, b_max)).
         """
         super().__init__()
-        self._light = light
+        self._light = utils.get_object(light)
         self._power_range = power_range
         self._color_range = color_range
 

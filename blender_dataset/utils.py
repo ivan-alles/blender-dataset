@@ -18,6 +18,11 @@ from mathutils import Vector
 import numpy as np
 
 
+def get_object(obj):
+    if type(obj) == str:
+        return bpy.data.objects[obj]
+    return obj
+
 def set_render_filepath(filepath):
     root, ext = os.path.splitext(filepath)
     bpy.context.scene.render.image_settings.file_format = ext[1:].upper()
