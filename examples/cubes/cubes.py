@@ -30,7 +30,9 @@ generator = generator.Generator(
     incremental=False,
     output_dir=os.path.join(MYDIR, 'output'),
     image_size=[640, 480],
-    rng_seed=1)
+    rng_seed=1,
+    image_extension='.png'
+)
 
 objects = ['cube1', 'cube2']
 

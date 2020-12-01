@@ -26,7 +26,11 @@ def get_object(obj):
 
 def set_render_filepath(filepath):
     root, ext = os.path.splitext(filepath)
-    bpy.context.scene.render.image_settings.file_format = ext[1:].upper()
+    ext_to_image_type = {
+        'JPG': 'JPEG'
+    }
+    image_type = ext_to_image_type.get(ext[1:].upper(), ext[1:].upper())
+    bpy.context.scene.render.image_settings.file_format = image_type
     bpy.context.scene.render.filepath = root
 
 
