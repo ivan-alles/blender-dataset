@@ -17,7 +17,7 @@ class Generator:
 
     def __init__(self, incremental=False,
                  output_dir='output',
-                 image_size=(640, 480), image_extension='png',
+                 image_size=(640, 480), image_extension='.png',
                  rng_seed=None):
         """
         Creates new object.
@@ -89,7 +89,7 @@ class Generator:
             handler.generator = self
 
         if self._incremental:
-            path = self._output_dir + '/**/*.' + self._image_extension
+            path = self._output_dir + '/**/*' + self._image_extension
             images = glob.glob(path, recursive=True)
             indexes = [int(os.path.splitext(os.path.basename(x))[0]) for x in images] + [-1]
             start_index = max(indexes) + 1
@@ -97,20 +97,20 @@ class Generator:
             start_index = 0
             utils.make_clean_directory(self._output_dir)
 
-        self._run_handlers("on_scene_begin")
+        self._run_handlers('on_scene_begin')
 
         if self._image_size is not None:
             utils.set_render_image_size(*self._image_size)
 
         for i in range(start_index, start_index + count):
-            self._current_image_path = '{:04d}/{:07d}.{}'.format(i // 1000, i, self._image_extension)
-            self._run_handlers("on_image_begin")
+            self._current_image_path = f'{i // 1000:04d}/{i:07d}{self._image_extension}'
+            self._run_handlers('on_image_begin')
             full_image_path = os.path.join(self._output_dir, self._current_image_path)
             utils.set_render_filepath(full_image_path)
             bpy.ops.render.render(write_still=True)
-            self._run_handlers("on_image_end", reverse=True)
+            self._run_handlers('on_image_end', reverse=True)
 
-        self._run_handlers("on_scene_end", reverse=True)
+        self._run_handlers('on_scene_end', reverse=True)
 
     def _run_handlers(self, method_name, reverse=False):
         handlers = reversed(self._handlers) if reverse else self._handlers
