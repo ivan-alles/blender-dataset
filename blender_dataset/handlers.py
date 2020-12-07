@@ -238,11 +238,13 @@ class PlaceMultipleObjectsHandler(Handler):
 
 class SetMaterialHandler(Handler):
     """
-    This handler sets surface for an obj.
+    Set material for an object.
+    How to create materials with textures: https://www.youtube.com/watch?v=NpJKZPTXlTU
     """
 
     def __init__(self, obj, materials=[],
                  texture_location_range=None,
+                 texture_rotation_range=None,
                  texture_scale_range=None):
         """
         Constructs a new SetTexturedSurfaceHandler.
@@ -253,23 +255,25 @@ class SetMaterialHandler(Handler):
         self._materials = [bpy.data.materials.get(mn) for mn in materials]
         self._object = utils.get_object(obj)
         self._texture_location_range = texture_location_range
+        self._texture_rotation_range = texture_rotation_range
         self._texture_scale_range = texture_scale_range
 
     def on_image_begin(self):
         material = self._materials[self._generator.rng.randint(0, len(self._materials))]
         self._object.data.materials.clear()
         self._object.data.materials.append(material)
-        # mapping_key = "Mapping"
-        # if mapping_key in material.node_tree.nodes:
-        #     texture_mapping_node = material.node_tree.nodes[mapping_key]
-        #     if self._texture_location_range is not None:
-        #         value = self._generator.rng.uniform(self._texture_location_range[0], self._texture_location_range[1])
-        #         # TODO(ia): restore this
-        #         # texture_mapping_node.translation = value
-        #     if self._texture_scale_range is not None:
-        #         value = self._generator.rng.uniform(self._texture_scale_range[0], self._texture_scale_range[1])
-        #         # TODO(ia): restore this
-        #         # texture_mapping_node.scale = value
+        mapping_key = "Mapping"
+        if mapping_key in material.node_tree.nodes:
+            texture_mapping_node = material.node_tree.nodes[mapping_key]
+            if self._texture_location_range is not None:
+                value = self._generator.rng.uniform(*self._texture_location_range)
+                texture_mapping_node.inputs[1].default_value = value
+            if self._texture_rotation_range is not None:
+                value = self._generator.rng.uniform(*self._texture_rotation_range)
+                texture_mapping_node.inputs[2].default_value = value
+            if self._texture_scale_range is not None:
+                value = self._generator.rng.uniform(*self._texture_scale_range)
+                texture_mapping_node.inputs[3].default_value = value
 
 
 class SetLightHandler(Handler):
