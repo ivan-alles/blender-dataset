@@ -112,7 +112,6 @@ class PlaceMultipleObjectsHandler(Handler):
         :param intersection_3d: if False, the 3d objects will not intersect.
         :param intersection_2d: if False, the rendered objects will not intersect.
         :param max_corners_outside_image: maximal number of object corners outside the image.
-        This process keeps unplaced objects outside the image.
         :param make_map2d: make a 2d array with pixels filled with object indexes.
         :param random_attempt_count: a number of attempts to place the objects.
         """
