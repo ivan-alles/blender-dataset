@@ -245,7 +245,8 @@ class SetMaterialHandler(Handler):
     def __init__(self, obj, materials=[],
                  texture_location_range=None,
                  texture_rotation_range=None,
-                 texture_scale_range=None):
+                 texture_scale_range=None,
+                 color_range=None):
         """
         Constructs a new SetTexturedSurfaceHandler.
 
@@ -257,12 +258,21 @@ class SetMaterialHandler(Handler):
         self._texture_location_range = texture_location_range
         self._texture_rotation_range = texture_rotation_range
         self._texture_scale_range = texture_scale_range
+        self._color_range = color_range
 
     def on_image_begin(self):
         material = self._materials[self._generator.rng.randint(0, len(self._materials))]
         self._object.data.materials.clear()
         self._object.data.materials.append(material)
-        mapping_key = "Mapping"
+
+        mapping_key = 'Principled BSDF'  # This is a node in a simple material created by default
+        if mapping_key in material.node_tree.nodes:
+            node = material.node_tree.nodes[mapping_key]
+            if self._color_range is not None:
+                value = self._generator.rng.uniform(*self._color_range)
+                node.inputs[0].default_value = value
+
+        mapping_key = 'Mapping'  # This is the mapping node from texture coordinates to color, normals, and roughness.
         if mapping_key in material.node_tree.nodes:
             texture_mapping_node = material.node_tree.nodes[mapping_key]
             if self._texture_location_range is not None:
