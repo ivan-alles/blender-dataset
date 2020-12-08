@@ -183,7 +183,11 @@ class PlaceMultipleObjectsHandler(Handler):
             self._map2d = np.zeros(self._image_size[::-1], dtype=np.int32)
         successfully_placed = []
 
-        for obj_i, obj in enumerate(self._objects):
+        object_indices = list(range(len(self._objects)))
+        self._generator.rng.shuffle(object_indices)
+
+        for obj_i in object_indices:
+            obj = self._objects[obj_i]
             is_placed = False
             obj.hide_viewport = False
             obj.hide_render = False
