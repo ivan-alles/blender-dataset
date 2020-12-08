@@ -220,11 +220,10 @@ class PlaceMultipleObjectsHandler(Handler):
                     continue
 
                 if not self._intersection_2d:
-                    if obj_i > 0:
-                        convex_hull_image = np.zeros_like(self._map2d)
-                        cv2.fillPoly(convex_hull_image, convex_hull.reshape(1, -1, 2), color=obj_i + 1)
-                        if np.logical_and(convex_hull_image, self._map2d).any():
-                            continue
+                    convex_hull_image = np.zeros_like(self._map2d)
+                    cv2.fillPoly(convex_hull_image, convex_hull.reshape(1, -1, 2), color=obj_i + 1)
+                    if np.logical_and(convex_hull_image, self._map2d).any():
+                        continue
 
                 bpy.context.view_layer.update()
                 successfully_placed.append(obj)
