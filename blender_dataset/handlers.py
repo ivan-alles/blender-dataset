@@ -376,18 +376,9 @@ class CreateDatasetFileHandler(Handler):
             'y': image_origin[1],
             'angle': angle,
         }
-        bounding_box = utils.compute_orinented_bounding_box_on_image(obj)
-        bounding_box_label = {
-            'x': bounding_box[0][0],
-            'y': bounding_box[0][1],
-            'size_x': bounding_box[1][0],
-            'size_y': bounding_box[1][1],
-            'angle': np.deg2rad(bounding_box[2])
-        }
         return {
             'category': self._objects.index(obj),
-            'origin': origin_label,
-            'bounding_box': bounding_box_label
+            'origin': origin_label
         }
 
     def on_scene_end(self):
