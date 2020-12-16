@@ -103,7 +103,8 @@ class PlaceMultipleObjectsHandler(Handler):
                  intersection_2d=True,
                  max_corners_outside_image=None,
                  make_map2d=False,
-                 random_attempt_count=100):
+                 random_attempt_count=100,
+                 break_on_first_failed=False):
         """
         :param objects: an iterable of objects.
         :param location_range: a tuple ((x_min, y_min, z_min), (x_max, y_max, z_max)).
@@ -114,6 +115,7 @@ class PlaceMultipleObjectsHandler(Handler):
         :param max_corners_outside_image: maximal number of object corners outside the image.
         :param make_map2d: make a 2d array with pixels filled with object indexes.
         :param random_attempt_count: a number of attempts to place the objects.
+        :param break_on_first_failed: if True, stops on the first objects that cannot be placed.
         """
         super().__init__()
         self._location_range = np.array(location_range)
@@ -126,6 +128,7 @@ class PlaceMultipleObjectsHandler(Handler):
         self._make_map2d = make_map2d
         self._map2d = None
         self._random_attempt_count = random_attempt_count
+        self._break_on_first_failed = break_on_first_failed
 
         image_pose_camera, self._image_size = utils.get_camera_intrinsics()
         image_pose_camera = t3.Transform3(image_pose_camera)
@@ -182,6 +185,10 @@ class PlaceMultipleObjectsHandler(Handler):
             self._map2d = np.zeros(self._image_size[::-1], dtype=np.int32)
         successfully_placed = []
 
+        for obj in self._objects:
+            obj.hide_viewport = True
+            obj.hide_render = True
+
         object_indices = list(range(len(self._objects)))
         self._generator.rng.shuffle(object_indices)
 
@@ -236,6 +243,8 @@ class PlaceMultipleObjectsHandler(Handler):
             if not is_placed:
                 obj.hide_viewport = True
                 obj.hide_render = True
+                if self._break_on_first_failed:
+                    break
 
 
 class SetMaterialHandler(Handler):
