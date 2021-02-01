@@ -63,23 +63,25 @@ class Handler:
         pass
 
 
-class PlaceObject(Handler):
+class PlaceObjectHandler(Handler):
     """
     Places an obj into desired location and orientation.
     """
 
-    def __init__(self, obj, location_range=None, rotation_euler_range=None):
+    def __init__(self, obj, location_range=None, rotation_euler_range=None, scale_range=None):
         """
         Creates a new handler.
 
         :param obj: the object or its name.
         :param location_range: a tuple ((x_min, y_min, z_min), (x_max, y_max, z_max)).
         :param rotation_euler_range: a tuple ((a1_min, a2_min, a3_min), (a1_max, a2_max, a3_max)).
+        :param scale_range: a tuple ((sx_min, sy_min, sy_min), (sy_max, sy_max, sz_max)).
         """
         super().__init__()
         self._object = utils.get_object(obj)
         self._location_range = location_range
         self._rotation_euler_range = rotation_euler_range
+        self._scale_range = scale_range
 
     def on_image_begin(self):
         if self._location_range is not None:
@@ -87,6 +89,9 @@ class PlaceObject(Handler):
 
         if self._rotation_euler_range is not None:
             self._object.rotation_euler = self._generator.rng.uniform(*self._rotation_euler_range)
+
+        if self._scale_range is not None:
+            self._object.scale = self._generator.rng.uniform(*self._scale_range)
 
 
 class PlaceMultipleObjectsHandler(Handler):
