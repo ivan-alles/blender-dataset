@@ -103,6 +103,7 @@ class PlaceMultipleObjectsHandler(Handler):
                  objects,
                  location_range=None,
                  rotation_euler_range=None,
+                 scale_range=None,
                  bounds=None,
                  intersection_3d=True,
                  intersection_2d=True,
@@ -114,6 +115,7 @@ class PlaceMultipleObjectsHandler(Handler):
         :param objects: an iterable of objects.
         :param location_range: a tuple ((x_min, y_min, z_min), (x_max, y_max, z_max)).
         :param rotation_euler_range: a tuple ((a1_min, a2_min, a3_min), (a1_max, a2_max, a3_max)).
+        :param scale_range: a tuple ((sx_min, sy_min, sy_min), (sy_max, sy_max, sz_max)).
         :param bounds: a bounding box the objects must fit into: ((minx, miny, minz), (maxx, maxy, maxz)).
         :param intersection_3d: if False, the 3d objects will not intersect.
         :param intersection_2d: if False, the rendered objects will not intersect.
@@ -125,6 +127,7 @@ class PlaceMultipleObjectsHandler(Handler):
         super().__init__()
         self._location_range = np.array(location_range)
         self._rotation_euler_range = rotation_euler_range
+        self._scale_range = scale_range
         self._objects = [utils.get_object(o) for o in objects]
         self._bounds = bounds
         self._intersection_2d = intersection_2d
@@ -202,6 +205,9 @@ class PlaceMultipleObjectsHandler(Handler):
             is_placed = False
             obj.hide_viewport = False
             obj.hide_render = False
+
+            if self._scale_range is not None:
+                obj.scale = self._generator.rng.uniform(*self._scale_range)
 
             for attempt_i in range(self._random_attempt_count):
                 if self._location_range is not None:
