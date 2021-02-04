@@ -206,15 +206,15 @@ class PlaceMultipleObjectsHandler(Handler):
             obj.hide_viewport = False
             obj.hide_render = False
 
-            if self._scale_range is not None:
-                obj.scale = self._generator.rng.uniform(*self._scale_range)
-
             for attempt_i in range(self._random_attempt_count):
                 if self._location_range is not None:
                     obj.location = self._generator.rng.uniform(*self._location_range)
 
                 if self._rotation_euler_range is not None:
                     obj.rotation_euler = self._generator.rng.uniform(*self._rotation_euler_range)
+
+                if self._scale_range is not None:
+                    obj.scale = self._generator.rng.uniform(*self._scale_range)
 
                 bpy.context.view_layer.update()
 
