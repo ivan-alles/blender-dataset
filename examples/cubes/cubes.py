@@ -42,7 +42,7 @@ handlers = [
         power_range=(5, 15),
         color_range=((0.8, 0.8, 0.8), (1, 1, 1))
     ),
-    handlers.PlaceObject(
+    handlers.PlaceObjectHandler(
         'light',
         location_range=((-1, -1, 0.5), (1, 1, 1.5))),
     handlers.SetMaterialHandler(
