@@ -1,6 +1,6 @@
 # Blender Dataset.
 
-A toolkit to create photorealistic image datasets for machine learning with Blender.
+A python toolkit to create photorealistic image datasets for machine learning with Blender.
 
 ## Installation
 
